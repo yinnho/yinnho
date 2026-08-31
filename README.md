@@ -1,0 +1,33 @@
+<div align="center">
+
+[![aginxbrowser stars](https://img.shields.io/github/stars/yinnho/aginxbrowser?style=flat-square&labelColor=161b22)](https://github.com/yinnho/aginxbrowser/stargazers)
+[![License](https://img.shields.io/github/license/yinnho/aginxbrowser?style=flat-square&labelColor=161b22)](https://github.com/yinnho/aginxbrowser/blob/main/LICENSE)
+[![Release](https://img.shields.io/github/v/release/yinnho/aginxbrowser?style=flat-square&labelColor=161b22)](https://github.com/yinnho/aginxbrowser/releases)
+
+</div>
+
+I build Rust infrastructure for the agent internet — the stack that lets AI agents reach the web and each other the way people reach websites over HTTP.
+
+## Products
+
+**[aginxbrowser](https://github.com/yinnho/aginxbrowser)** — web access for AI agents: one MCP server, one Rust binary. Fetch live pages as markdown, render JS/SPAs on a built-in V8, screenshot without Chromium, five-engine meta-search, interactive login sessions with replayable action logs. Apache-2.0 — self-host it, or point your client at the hosted instance.
+
+In our benchmark ([bench/](https://github.com/yinnho/aginxbrowser/tree/main/bench)), a tiered auto-fetch answers in **532 ms** where a Chrome-class round trip takes **4053 ms**, at **~227 MB vs ~2.1 GB** per page. Pages that only need the HTML layer never pay for a browser.
+
+**[aginx](https://github.com/yinnho/aginx)** — the Agent Protocol: route messages to agents as easily as HTTP routes them to servers. A pure server — which models an agent runs is the agent's own business.
+
+**[opencarrier](https://github.com/yinnho/opencarrier)** — an open-source agent OS in Rust: WeChat / Feishu / DingTalk / WeCom access, pluggable tools, 24/7 autonomous scheduling.
+
+Also: **[model-router](https://github.com/yinnho/model-router)** (protocol-translating model proxy with failover), **[ProxyMaster](https://github.com/yinnho/ProxyMaster)** (auto-rule Chrome proxy manager), **[UPnPCast](https://github.com/yinnho/UPnPCast)** (modern DLNA/UPnP casting for Android).
+
+## How I work upstream
+
+When something breaks, I fix it in our tree first, verify the fix against a repro, and then hand the root cause and the patch data back upstream. Every claim below links a commit and a test.
+
+- **[obscura#769](https://github.com/h4ckf0r0day/obscura/issues/769)** — rustls ships zero TLS 1.2 CBC cipher suites, so CBC-only legacy servers die at ClientHello while every browser connects fine. Reproduced on `cbc.badssl.com`; our robots.txt gate now takes one final ride on the BoringSSL transport — same honest User-Agent, different cipher shelf ([62ad068](https://github.com/yinnho/aginxbrowser/commit/62ad068)).
+- **[obscura#779](https://github.com/h4ckf0r0day/obscura/issues/779)** — CDP `RemoteObject` contradicted itself for primitives: `value` was a string copy of `description`, `undefined` collapsed into `null`, and handles were minted for everything. Fixed all four shapes with CDP-level tests — and the tighter contract flushed out a latent bug where the handle path read its metadata from the wrong value ([1b864eb](https://github.com/yinnho/aginxbrowser/commit/1b864eb)).
+- **[obscura#541](https://github.com/h4ckf0r0day/obscura/issues/541)** — number RemoteObjects now spell like Chrome (`2`, not `2.0`) ([4760524](https://github.com/yinnho/aginxbrowser/commit/4760524)).
+- **[modelcontextprotocol#3305](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/3305)** — the browser-automation capability contract discussion; our evidence-first `session_click` response ([8712c14](https://github.com/yinnho/aginxbrowser/commit/8712c14)) came out of that thread.
+- **[blitz#750](https://github.com/nicoburns/blitz/pull/750)** — inline baseline alignment; we port the same semantics as a post-layout per-line shift — a different architecture reaching the same rendering.
+
+Every issue I report, I arrive with a repro and a fix already running in our build.
