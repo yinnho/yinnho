@@ -10,7 +10,7 @@ I build Rust infrastructure for the agent internet — the stack that lets AI ag
 
 ## Products
 
-**[aginxbrowser](https://github.com/yinnho/aginxbrowser)** — web access for AI agents: one MCP server, one Rust binary. Fetch live pages as markdown, render JS/SPAs on a built-in V8, screenshot without Chromium, five-engine meta-search, interactive login sessions with replayable action logs. Apache-2.0 — self-host it, or point your client at the hosted instance.
+**[aginxbrowser](https://github.com/yinnho/aginxbrowser)** — web access for AI agents: one Rust binary, plain HTTP API, own V8/`diting_runtime` (no Chromium). Fetch live pages as markdown, render JS/SPAs, screenshot, 20-engine meta-search, interactive login sessions with replayable action logs. Apache-2.0 — self-host it, or point your client at the hosted instance ([v0.6.0](https://github.com/yinnho/aginxbrowser/releases/tag/v0.6.0)).
 
 In our benchmark ([bench/](https://github.com/yinnho/aginxbrowser/tree/main/bench)), a tiered auto-fetch answers in **532 ms** where a Chrome-class round trip takes **4053 ms**, at **~227 MB vs ~2.1 GB** per page. Pages that only need the HTML layer never pay for a browser.
 
